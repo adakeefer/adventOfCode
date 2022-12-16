@@ -3,10 +3,10 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <unordered_map>
 
 using namespace std;
 
+//fuck it it's ugly i don't care
 
 vector<vector<int>> parseTrees(ifstream& istream) {
 	vector<vector<int>> trees;
@@ -93,69 +93,61 @@ int partTwo(vector<vector<int>>& trees) {
 	vector<vector<int>> scenicScores(trees.size(), vector<int>(trees.front().size(), 1));
 
 	for (int i = 0; i < trees.size(); ++i) {
-		unordered_map<int, int> mostRecent;
 		for (int j = 0; j < trees[i].size(); ++j) {
-				int score = j;
-				int curr = trees[i][j];
-				for (int temp = curr; temp < 10; ++temp) {
-					if (mostRecent.find(temp) != mostRecent.end()) {
-						score = j - mostRecent[temp];
-						break;
-					}
+			int curr = trees[i][j];
+			int score = 0;
+			for (int k = j - 1; k >= 0; --k) {
+				if (trees[i][k] >= curr) {
+					score = k;
+					break;
 				}
-				scenicScores[i][j] *= score;
-				mostRecent[curr] = j;
-		}
+			}
+			scenicScores[i][j] *= (j - score);
+		} 
 	}
 
 	for (int i = 0; i < trees.size(); ++i) {
-		unordered_map<int, int> mostRecent;
 		for (int j = trees[i].size() - 1; j >= 0; --j) {
-				int score = trees[i].size() - j - 1;
-				int curr = trees[i][j];
-				for (int temp = curr; temp < 10; ++temp) {
-					if (mostRecent.find(temp) != mostRecent.end()) {
-						score = mostRecent[temp] - j;
-						break;
-					}
+			int curr = trees[i][j];
+			int score = trees[i].size() - 1;
+			for (int k = j + 1; k < trees[i].size(); ++k) {
+				if (trees[i][k] >= curr) {
+					score = k;
+					break;
 				}
-				scenicScores[i][j] *= score;
-				mostRecent[curr] = j;
-		}
+			}
+			scenicScores[i][j] *= (score - j);
+		} 
 	}
 
 	for (int i = 0; i < trees.front().size(); ++i) {
-		unordered_map<int, int> mostRecent;
 		for (int j = 0; j < trees.size(); ++j) {
-				int score = j;
-				int curr = trees[j][i];
-				for (int temp = curr; temp < 10; ++temp) {
-					if (mostRecent.find(temp) != mostRecent.end()) {
-						score = j - mostRecent[temp];
-						break;
-					}
+			int curr = trees[j][i];
+			int score = 0;
+			for (int k = j - 1; k >= 0; --k) {
+				if (trees[k][i] >= curr) {
+					score = k;
+					break;
 				}
-				scenicScores[j][i] *= score;
-				mostRecent[curr] = j;
-		}
+			}
+			scenicScores[j][i] *= (j - score);
+		} 
 	}
 
 	for (int i = 0; i < trees.front().size(); ++i) {
-		unordered_map<int, int> mostRecent;
 		for (int j = trees.size() - 1; j >= 0; --j) {
-				int score = trees.size() - j - 1;
-				int curr = trees[j][i];
-				for (int temp = curr; temp < 10; ++temp) {
-					if (mostRecent.find(temp) != mostRecent.end()) {
-						score = mostRecent[temp] - j;
-						break;
-					}
+			int curr = trees[j][i];
+			int score = trees.size() - 1;
+			for (int k = j + 1; k < trees.front().size(); ++k) {
+				if (trees[k][i] >= curr) {
+					score = k;
+					break;
 				}
-				scenicScores[j][i] *= score;
-				mostRecent[curr] = j;
-		}
+			}
+			scenicScores[j][i] *= (score - j);
+		} 
 	}
-
+	
 	return highestScenicScore(scenicScores);
 }
 
